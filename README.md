@@ -1,2 +1,2 @@
-# p2poolio
-Python program to read data from the P2Pool Log File
+# P2Pool IO
+Python program to read data from the [Monero P2Pool](https://github.com/SChernykh/p2pool) Log File
