@@ -2,7 +2,14 @@
 Python program to read data from the [Monero P2Pool](https://github.com/SChernykh/p2pool) Log File
 
 ## Usage
-**Calling the reader**
+### Dependencies
+Not really a necessary step since all dependencies should already be there. However you may not use them in your project, so here you go:
+- time
+- datetime
+- os
+- json (for debugging)
+
+### Calling the reader
 
 Doing `P2PoolIO.read()` anywhere will give you the readout result. You can also do
 ```
@@ -10,7 +17,7 @@ foo = P2PoolIO
 data = foo.read()
 ```
 
-**Possible arguments:**
+### Possible arguments:
 - `path` (default: p2pool.log - must point to p2pool.log)
 - `returnLines` (default: False)
 - `linelimit` (default: 100)
