@@ -1,18 +1,19 @@
 # the payout variable always holds the most recent one
-# i am a cluttered mess written in like 10 minutes, so don't be too harsh :)
 
 # View readme.md for more info & syntax
 
+# Version 1.1
+
 import time
-import datetime
 import os
+import datetime
 
 class P2PoolIO:
     def read(path: str = "p2pool.log", returnLines: bool = False, linelimit: int = 100):
         starttime = time.time()
 
         if (not os.path.exists(path)):
-            raise Exception(f'The given path does not exist! Check for {os.path.abspath(os.getcwd())}\{path}')
+            raise Exception(f'The given path does not exist! Check for {os.path.abspath(os.getcwd())}/{path}')
         
         lines = []
         payout = {}
@@ -23,7 +24,10 @@ class P2PoolIO:
             # Read the file in reverse and add each line to the list
             for line in reversed(f.readlines()):
                 if (len(lines) < linelimit):
-                    line = line.replace("\n", "").replace("  ", " ")
+                    line = line.replace("\n", "")
+
+                    while("  " in line): # Replace double spaces with single spaces
+                        line = line.replace("  ", " ")
 
                     # READ AND CATEGORIZE (and declutter)
                     splits = line.split(" ")
@@ -38,7 +42,7 @@ class P2PoolIO:
 
                     # Your wallet ... didn't get a payout in block 2814592 because you had no shares in PPLNS window
                     # Your wallet ... got a payout of 0.12345 XMR in block 2820000
-                    hasPayout: bool = (module == "P2Pool" and line.startswith("Your wallet") and "got a payout" in line and not "no shares" in line and payout == {}) 
+                    hasPayout: bool = ("your wallet" in line.lower() and "got a payout of" in line.lower() and "in block" in line.lower()) 
                     payoutdata = {
                         "payout": hasPayout
                     }
@@ -57,6 +61,7 @@ class P2PoolIO:
 
                     if (hasPayout):
                         payoutdata["timestamp"] = timestamp
+                        payoutdata["block"] = int(line.split(" ")[-1])
                         del(payoutdata["payout"])
                         payout = payoutdata
                 else:
@@ -64,14 +69,13 @@ class P2PoolIO:
 
         returndata = {
             "payout": payout,
-            "time": time.time() - starttime,
+            "exectime": time.time() - starttime,
         }
 
         if (returnLines):
             returndata["lines"] = lines
 
         return returndata
-
-
+    
 import json
 print(json.dumps(P2PoolIO.read()))
